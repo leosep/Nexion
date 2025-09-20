@@ -1,0 +1,137 @@
+﻿
+@model DatingApp.Web.ViewModels.ChatViewModel
+@using DatingApp.Core.Models
+@using System.Security.Claims
+
+@{
+    ViewData["Title"] = "Chat con " + Model.OtherUser.Username;
+    Layout = "_Layout";
+    var currentUserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+}
+
+<style>
+    .message-container {
+        max-height: calc(100vh - 200px);
+        overflow-y: auto;
+    }
+
+    .chat-bubble {
+        padding: 0.75rem;
+        border-radius: 1rem;
+        margin-bottom: 0.5rem;
+        max-width: 75%;
+    }
+
+        .chat-bubble.sent {
+            background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
+            color: white;
+            margin-left: auto;
+            box-shadow: 0 2px 4px rgba(255, 107, 157, 0.3);
+        }
+
+        .chat-bubble.received {
+            background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%);
+            color: #880e4f;
+            margin-right: auto;
+            box-shadow: 0 2px 4px rgba(248, 187, 217, 0.3);
+        }
+</style>
+
+<div class="flex flex-col h-full bg-white bg-opacity-95 backdrop-blur-sm rounded-2xl shadow-2xl p-6 border border-pink-100">
+    <div class="flex items-center space-x-4 mb-4 pb-4 border-b border-pink-200">
+        <div class="relative">
+            <img src="@(Model.OtherUser.ProfilePhotoUrls?.FirstOrDefault() ?? "https://placehold.co/40x40/e2e8f0/718096?text=No+Foto")" alt="@Model.OtherUser.Username" class="w-12 h-12 rounded-full object-cover border-2 border-pink-200">
+            <div class="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white"></div>
+        </div>
+        <div>
+            <h1 class="text-xl font-semibold text-gray-800 flex items-center space-x-2">
+                <span>@Model.OtherUser.Username</span>
+                <i class="fas fa-heart text-pink-500 text-sm"></i>
+            </h1>
+            <p class="text-sm text-gray-500">En línea</p>
+        </div>
+    </div>
+
+    <div id="message-container" class="flex-1 message-container flex flex-col space-y-2">
+        @foreach (var message in Model.Messages.OrderBy(m => m.SentAt))
+        {
+            var isSent = message.SenderId == currentUserId;
+            <div class="flex @(isSent ? "justify-end" : "justify-start")">
+                <div class="chat-bubble @(isSent ? "sent" : "received")">
+                    @message.Content
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="mt-4 pt-4 border-t border-pink-200">
+        <div class="flex items-center space-x-3">
+            <input type="text" id="messageInput" class="flex-1 px-6 py-3 rounded-full border border-pink-200 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all duration-200 bg-pink-50 placeholder-pink-400" placeholder="Escribe un mensaje romántico..." />
+            <button id="sendMessageBtn" class="bg-gradient-to-r from-pink-500 to-red-500 text-white p-3 rounded-full hover:from-pink-600 hover:to-red-600 transition-all duration-300 transform hover:scale-110 shadow-lg">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
+    <script>
+        const messageContainer = document.getElementById("message-container");
+        const messageInput = document.getElementById("messageInput");
+        const sendMessageBtn = document.getElementById("sendMessageBtn");
+
+        // Lógica de conexión a SignalR
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/datinghub")
+            .build();
+
+        // Lógica para recibir mensajes
+        connection.on("ReceiveMessage", (senderId, messageContent) => {
+            const isSent = parseInt(senderId) === @currentUserId;
+            const chatBubbleClass = isSent ? "chat-bubble sent" : "chat-bubble received";
+            const justifyClass = isSent ? "justify-end" : "justify-start";
+
+            const messageDiv = document.createElement("div");
+            messageDiv.className = `flex ${justifyClass}`;
+            messageDiv.innerHTML = `<div class="${chatBubbleClass}">${messageContent}</div>`;
+
+            messageContainer.appendChild(messageDiv);
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+        });
+
+        // Lógica para enviar mensajes
+        if (sendMessageBtn) {
+            sendMessageBtn.addEventListener("click", event => {
+                event.preventDefault();
+                const message = messageInput.value;
+                if (message && message.trim() !== "") {
+                    connection.invoke("SendMessage", @Model.OtherUser.Id, message)
+                        .then(() => {
+                            messageInput.value = "";
+                        })
+                        .catch(err => console.error(err.toString()));
+                }
+            });
+        }
+
+        // Permite enviar mensajes con la tecla 'Enter'
+        if (messageInput) {
+            messageInput.addEventListener("keypress", event => {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    sendMessageBtn.click();
+                }
+            });
+        }
+
+        // Iniciar la conexión
+        connection.start()
+            .then(() => {
+                console.log("Conexión con SignalR establecida.");
+                messageContainer.scrollTop = messageContainer.scrollHeight;
+            })
+            .catch(err => console.error("Error al iniciar la conexión con SignalR: " + err.toString()));
+
+    </script>
+}

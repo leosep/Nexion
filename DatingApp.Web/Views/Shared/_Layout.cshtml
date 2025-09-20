@@ -1,0 +1,88 @@
+﻿@* DatingApp.Web/Views/Shared/_Layout.cshtml *@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - DatingApp</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="~/css/site.css" />
+    <style>
+        .love-gradient {
+            background: linear-gradient(135deg, #ff6b9d 0%, #c44569 50%, #ff4757 100%);
+        }
+        .heart-pulse {
+            animation: heartPulse 2s infinite;
+        }
+        @@keyframes heartPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+    </style>
+</head>
+<body class="bg-pink-50 font-sans leading-normal tracking-normal flex flex-col min-h-screen">
+
+    <nav class="love-gradient shadow-lg">
+        <div class="container mx-auto px-6 py-3">
+            <div class="flex items-center justify-between">
+                <a class="text-white text-2xl font-bold font-inter flex items-center space-x-2" href="/">
+                    <i class="fas fa-heart heart-pulse text-red-300"></i>
+                    <span>DatingApp</span>
+                </a>
+                <div class="flex items-center space-x-4">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <a href="/User/Index" class="text-white hover:text-pink-200 transition duration-300 flex items-center space-x-1">
+                            <i class="fas fa-search"></i>
+                            <span>Explorar</span>
+                        </a>
+                        <a href="/User/Descubrir" class="text-white hover:text-pink-200 transition duration-300 flex items-center space-x-1">
+                            <i class="fas fa-heart"></i>
+                            <span>Descubrir</span>
+                        </a>
+                        <a href="/User/Profile" class="text-white hover:text-pink-200 transition duration-300 flex items-center space-x-1">
+                            <i class="fas fa-user"></i>
+                            <span>Perfil</span>
+                        </a>
+                        <a href="/Chat" class="text-white hover:text-pink-200 transition duration-300 flex items-center space-x-1">
+                            <i class="fas fa-comments"></i>
+                            <span>Mensajes</span>
+                        </a>
+                        <a href="/Auth/Logout" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-full transition duration-300 flex items-center space-x-1">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Cerrar sesión</span>
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="/Auth/Login" class="text-white hover:text-pink-200 transition duration-300 flex items-center space-x-1">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>Login</span>
+                        </a>
+                        <a href="/Auth/Register" class="text-white hover:text-pink-200 transition duration-300 flex items-center space-x-1">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Registro</span>
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-6 py-8 flex-grow">
+        @RenderBody()
+    </div>
+
+    <footer class="love-gradient text-white py-4 mt-auto">
+        <div class="container mx-auto px-6 text-center flex items-center justify-center space-x-2">
+            <i class="fas fa-heart text-red-300"></i>
+            <span>&copy; @DateTime.Now.Year - DatingApp - Encuentra el amor</span>
+            <i class="fas fa-heart text-red-300"></i>
+        </div>
+    </footer>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

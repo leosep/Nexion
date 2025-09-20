@@ -1,0 +1,344 @@
+﻿@* DatingApp.Web/Views/User/Index.cshtml *@
+
+@model IEnumerable<DatingApp.Web.ViewModels.UserViewModel>
+@using System.Security.Claims
+@using System.Text.Json
+
+@{
+    ViewData["Title"] = "Perfiles";
+    Layout = "_Layout";
+}
+
+<style>
+    /* CSS para la tarjeta y el modal */
+    .card-shadow {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    .animate-pulse-grow {
+        animation: pulse-grow 1.5s infinite;
+    }
+
+    .animate-fade-in {
+        animation: fadeIn 0.5s ease-out forwards;
+    }
+
+    /* La sintaxis keyframes es estándar de CSS. Razor la ignora cuando está dentro de una etiqueta <style > . */
+    @@keyframes pulse-grow {
+        0%, 100%
+
+    {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<div class="flex-grow flex flex-col items-center p-4 overflow-y-auto">
+    <h2 class="text-4xl font-extrabold text-gray-800 mb-8 text-center">Encuentra a tu próxima pareja</h2>
+
+    <div class="w-full max-w-2xl mb-8">
+        <form asp-controller="User" asp-action="Index" method="get" class="flex items-center space-x-4 p-6 rounded-2xl bg-gradient-to-r from-pink-50 to-red-50 shadow-xl border border-pink-100">
+            <div class="flex-1 relative">
+                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-pink-400"></i>
+                <input type="text" name="interests" placeholder="Buscar por intereses (ej: música, viajes, cine)" class="w-full pl-10 pr-4 py-3 rounded-xl border-pink-200 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all duration-200" />
+            </div>
+            <button type="submit" class="bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-2">
+                <i class="fas fa-heart"></i>
+                <span>Buscar</span>
+            </button>
+        </form>
+    </div>
+
+    <div id="user-feed" class="w-full max-w-2xl grid grid-cols-1 md:grid-cols-2 gap-8">
+            @if (!Model.Any())
+            {
+            <div class="col-span-1 md:col-span-2 text-center text-gray-500 mt-10 p-8 bg-gradient-to-br from-pink-50 to-purple-50 rounded-3xl border-2 border-dashed border-pink-200">
+                <i class="fas fa-heart-broken text-8xl text-pink-300 mb-6 animate-bounce"></i>
+                <h3 class="text-4xl font-bold text-gray-700 mb-4">¡No hay más perfiles!</h3>
+                <p class="text-xl text-gray-600 mb-6 max-w-md mx-auto">Has visto todos los perfiles disponibles que coinciden con tus preferencias actuales.</p>
+                <div class="space-y-4">
+                    <p class="text-lg text-gray-500">¿Qué te gustaría hacer?</p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="/User/Profile" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white font-bold rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg">
+                            <i class="fas fa-sliders-h mr-3"></i>
+                            Cambiar Preferencias
+                        </a>
+                        <a href="/User/Descubrir" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg">
+                            <i class="fas fa-heart mr-3"></i>
+                            Probar Descubrir
+                        </a>
+                    </div>
+                </div>
+            </div>
+            }
+            @foreach (var user in Model)
+            {
+            <div class="user-card bg-white bg-opacity-95 backdrop-blur-sm rounded-2xl overflow-hidden card-shadow transform transition-all duration-300 hover:scale-105 hover:shadow-2xl border border-pink-100" data-user-id="@user.Id" data-user-photos="@string.Join(",", user.ProfilePhotoUrls)">
+                <div class="relative h-96 w-full bg-gray-200 user-carousel-container">
+                        @if (user.ProfilePhotoUrls != null && user.ProfilePhotoUrls.Any())
+                        {
+                            for (int i = 0; i < user.ProfilePhotoUrls.Count; i++)
+                            {
+                                var photoUrl = user.ProfilePhotoUrls[i];
+                            <img src="@photoUrl" alt="Foto de perfil de @user.Username" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out carousel-item @(i == 0 ? "opacity-100" : "opacity-0")" onerror="this.src='https://placehold.co/400x400/e2e8f0/718096?text=No+Foto';" />
+                            }
+                        }
+                        else
+                        {
+                        <img src="https://placehold.co/400x400/e2e8f0/718096?text=No+Foto" alt="Sin foto de perfil" class="absolute inset-0 w-full h-full object-cover" />
+                        }
+
+                        @if (user.ProfilePhotoUrls.Count > 1)
+                        {
+                        <button class="prev-btn absolute top-1/2 left-2 transform -translate-y-1/2 bg-gray-800 bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-colors z-10">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </button>
+                        <button class="next-btn absolute top-1/2 right-2 transform -translate-y-1/2 bg-gray-800 bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-colors z-10">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </button>
+                        }
+                </div>
+
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 truncate">@user.Username</h3>
+                    <p class="text-gray-600 mt-2 text-sm line-clamp-3">@user.Bio</p>
+                        @if (!string.IsNullOrWhiteSpace(user.Interests))
+                        {
+                        <p class="text-gray-600 mt-2 text-sm font-medium">Intereses: @user.Interests</p>
+                        }
+
+                        @if (user.PromptAnswers != null && user.PromptAnswers.Any())
+                        {
+                        <div class="mt-4 border-t border-gray-200 pt-4">
+                                @foreach (var prompt in user.PromptAnswers)
+                                {
+                                    if (!string.IsNullOrWhiteSpace(prompt.Value))
+                                    {
+                                    <p class="text-xs text-gray-500 font-bold mb-1">
+                                            @switch (prompt.Key)
+                                            {
+                                                case "IdealWeekend":
+                                                    <text>Mi fin de semana ideal es...</text>
+                                                    break;
+                                                case "AlwaysLaughAt":
+                                                    <text>Siempre me río cuando...</text>
+                                                    break;
+                                                case "LifeGoal":
+                                                    <text>Algo que quiero hacer en mi vida es...</text>
+                                                    break;
+                                            }
+                                    </p>
+                                    <p class="text-sm text-gray-700 italic mb-3">@prompt.Value</p>
+                                    }
+                                }
+                        </div>
+                        }
+
+                    <div class="flex justify-between mt-6 space-x-3">
+                        <button class="interest-button flex-1 py-3 px-4 rounded-full text-white bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 font-medium transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2">
+                            <i class="fas fa-heart"></i>
+                            <span>Me interesa</span>
+                        </button>
+                        <button class="no-interest-button flex-1 py-3 px-4 rounded-full text-gray-700 bg-gradient-to-r from-gray-200 to-gray-300 hover:from-gray-300 hover:to-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 font-medium transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2">
+                            <i class="fas fa-times"></i>
+                            <span>No me interesa</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            }
+    </div>
+</div>
+
+<div id="match-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 backdrop-blur-sm">
+    <div class="bg-white bg-opacity-95 backdrop-blur-sm p-8 rounded-2xl shadow-2xl text-center animate-pulse-grow max-w-sm w-full border border-pink-100">
+        <div class="flex justify-center mb-4">
+            <i class="fas fa-heart text-6xl text-red-500 heart-pulse"></i>
+        </div>
+        <h3 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-red-600 mb-2">¡Es un Match! 💕</h3>
+        <p class="text-gray-700 text-lg mb-4">¡Has hecho match con <span id="matched-user-name" class="font-bold text-pink-600"></span>!</p>
+        <p class="text-gray-600 mb-6">Ahora puedes chatear y conoceros mejor</p>
+        <button id="closeModalBtn" class="px-8 py-3 bg-gradient-to-r from-pink-500 to-red-500 text-white rounded-full hover:from-pink-600 hover:to-red-600 transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center space-x-2 mx-auto">
+            <i class="fas fa-comments"></i>
+            <span>¡Genial!</span>
+        </button>
+    </div>
+</div>
+
+<div id="toast-container" class="fixed top-4 right-4 z-50"></div>
+
+    @section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const userFeed = document.getElementById('user-feed');
+            const matchModal = document.getElementById('match-modal');
+            const matchedUserNameSpan = document.getElementById('matched-user-name');
+            const closeModalButton = document.getElementById('closeModalBtn');
+            const toastContainer = document.getElementById('toast-container');
+
+            // --- Lógica del Carrusel de Imágenes ---
+            document.querySelectorAll('.user-card').forEach(card => {
+                const carouselItems = card.querySelectorAll('.carousel-item');
+                const prevBtn = card.querySelector('.prev-btn');
+                const nextBtn = card.querySelector('.next-btn');
+                let currentIndex = 0;
+
+                if (carouselItems.length > 0) {
+                    carouselItems.forEach((item, index) => {
+                        if (index !== currentIndex) {
+                            item.classList.add('opacity-0');
+                        }
+                    });
+
+                    if (carouselItems.length > 1) {
+                        prevBtn.addEventListener('click', (event) => {
+                            event.stopPropagation();
+                            currentIndex = (currentIndex - 1 + carouselItems.length) % carouselItems.length;
+                            updateCarousel(card, carouselItems, currentIndex);
+                        });
+
+                        nextBtn.addEventListener('click', (event) => {
+                            event.stopPropagation();
+                            currentIndex = (currentIndex + 1) % carouselItems.length;
+                            updateCarousel(card, carouselItems, currentIndex);
+                        });
+                    } else {
+                        prevBtn.classList.add('hidden');
+                        nextBtn.classList.add('hidden');
+                    }
+                }
+            });
+
+            function updateCarousel(card, items, index) {
+                items.forEach((item, i) => {
+                    if (i === index) {
+                        item.classList.remove('opacity-0');
+                        item.classList.add('opacity-100');
+                    } else {
+                        item.classList.remove('opacity-100');
+                        item.classList.add('opacity-0');
+                    }
+                });
+            }
+
+            // --- Lógica de SignalR para Notificaciones de Match ---
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl("/datinghub")
+                .build();
+
+            connection.on("ReceiveMatch", (matchedUserName) => {
+                matchedUserNameSpan.textContent = matchedUserName;
+                matchModal.classList.remove('hidden');
+
+                // Dispara el efecto de confeti 🥳
+                confetti({
+                    particleCount: 150,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            });
+
+            connection.start().catch(err => console.error("Error al conectar con SignalR:", err.toString()));
+
+            // --- Manejo de Clics en Botones de Interacción ---
+            userFeed.addEventListener('click', async (event) => {
+                const button = event.target.closest('.interest-button');
+                const noInterestButton = event.target.closest('.no-interest-button');
+
+                if (button || noInterestButton) {
+                    const card = (button || noInterestButton).closest('.user-card');
+                    if (!card) return;
+
+                    const targetUserId = card.dataset.userId;
+
+                    try {
+                        const response = await fetch('/User/AddInterest', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: JSON.stringify({ targetUserId: parseInt(targetUserId) })
+                        });
+
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            card.style.display = 'none';
+                        } else {
+                            showToast(`Error al procesar tu acción: ${result.message || 'Intenta de nuevo.'}`, 'error');
+                        }
+                    } catch (error) {
+                        console.error('Error al enviar la solicitud:', error);
+                        showToast('Ocurrió un error. Por favor, intenta de nuevo más tarde.', 'error');
+                    }
+                }
+            });
+
+            // --- Manejo del Cierre del Modal ---
+            closeModalButton.addEventListener('click', () => {
+                matchModal.classList.add('hidden');
+            });
+        });
+
+        // --- Función para mostrar Toasts (notificaciones temporales) ---
+        function showToast(message, type = 'info') {
+            const toastElement = document.createElement('div');
+            let bgColor = 'bg-indigo-600';
+            let textColor = 'text-white';
+
+            if (type === 'error') {
+                bgColor = 'bg-red-600';
+            } else if (type === 'success') {
+                bgColor = 'bg-green-600';
+            } else if (type === 'warning') {
+                bgColor = 'bg-yellow-500';
+                textColor = 'text-gray-900';
+            }
+
+            toastElement.className = `p-4 rounded-lg shadow-xl mb-4 transition-all duration-300 transform translate-x-full ${bgColor} ${textColor} w-full max-w-sm`;
+            toastElement.innerHTML = `<p>${message}</p>`;
+            toastContainer.prepend(toastElement);
+
+            setTimeout(() => {
+                toastElement.classList.remove('translate-x-full');
+            }, 50);
+
+            setTimeout(() => {
+                toastElement.classList.add('translate-x-full', 'opacity-0');
+                toastElement.addEventListener('transitionend', () => {
+                    if (toastElement.parentNode) {
+                        toastElement.parentNode.removeChild(toastElement);
+                    }
+                });
+            }, 5000);
+        }
+    </script>
+    }

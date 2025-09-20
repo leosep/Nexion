@@ -1,0 +1,42 @@
+﻿@* C:\Develop\DatingApp\DatingApp.Web\DatingApp.Web\Views\Message\Index.cshtml *@
+@model IEnumerable<DatingApp.Core.Models.Match>
+
+@{
+    ViewData["Title"] = "Mensajes";
+}
+
+<div class="matches-container">
+    <h2>Tus Matches</h2>
+    @if (Model.Any())
+    {
+        <div class="list-group">
+            @foreach (var match in Model)
+            {
+                var otherUser = match.User1.Id == ViewBag.CurrentUserId ? match.User2 : match.User1;
+                <a href="@Url.Action("Chat", "Message", new { matchId = match.Id })" class="list-group-item list-group-item-action">
+                    <div class="d-flex align-items-center">
+                        @if (otherUser.ProfilePhotoUrls.Any())
+                        {
+                            <img src="@otherUser.ProfilePhotoUrls.FirstOrDefault()" alt="Foto de perfil" class="profile-photo-mini" />
+                        }
+                        else
+                        {
+                            <div class="placeholder-photo-mini"></div>
+                        }
+                        <h5 class="mb-1">@otherUser.Username</h5>
+                    </div>
+                </a>
+            }
+        </div>
+    }
+    else
+    {
+        <p>Aún no tienes matches. ¡Sigue explorando!</p>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // Scripts adicionales aquí
+    </script>
+}

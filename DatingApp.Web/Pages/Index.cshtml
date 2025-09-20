@@ -1,0 +1,91 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Inicio";
+}
+
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-100 via-red-50 to-pink-200">
+    <div class="max-w-4xl mx-auto px-6 py-12 text-center">
+        <!-- Hero Section -->
+        <div class="mb-12">
+            <div class="flex justify-center mb-6">
+                <i class="fas fa-heart text-6xl text-red-500 heart-pulse"></i>
+            </div>
+            <h1 class="text-5xl md:text-7xl font-bold text-gray-800 mb-4">
+                Encuentra tu
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-red-600">
+                    Alma Gemela
+                </span>
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-600 mb-8 max-w-2xl mx-auto">
+                "El amor no se ve con los ojos, sino con el alma." - William Shakespeare
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <a href="/Auth/Register" class="bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white font-bold py-4 px-8 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center space-x-2">
+                    <i class="fas fa-heart"></i>
+                    <span>Únete Ahora</span>
+                </a>
+                <a href="/Auth/Login" class="border-2 border-pink-500 text-pink-500 hover:bg-pink-500 hover:text-white font-bold py-4 px-8 rounded-full text-lg transition-all duration-300 flex items-center space-x-2">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Iniciar Sesión</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="grid md:grid-cols-3 gap-8 mt-16">
+            <div class="bg-white bg-opacity-80 backdrop-blur-sm rounded-xl p-6 shadow-lg transform hover:scale-105 transition-all duration-300">
+                <div class="text-4xl text-pink-500 mb-4">
+                    <i class="fas fa-search-heart"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">Encuentra Matches</h3>
+                <p class="text-gray-600">Descubre personas compatibles con tus intereses y valores.</p>
+            </div>
+            <div class="bg-white bg-opacity-80 backdrop-blur-sm rounded-xl p-6 shadow-lg transform hover:scale-105 transition-all duration-300">
+                <div class="text-4xl text-red-500 mb-4">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">Chatea Fácilmente</h3>
+                <p class="text-gray-600">Conecta con tus matches a través de mensajes en tiempo real.</p>
+            </div>
+            <div class="bg-white bg-opacity-80 backdrop-blur-sm rounded-xl p-6 shadow-lg transform hover:scale-105 transition-all duration-300">
+                <div class="text-4xl text-purple-500 mb-4">
+                    <i class="fas fa-user-friends"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">Crea Conexiones</h3>
+                <p class="text-gray-600">Construye relaciones significativas en un entorno seguro.</p>
+            </div>
+        </div>
+
+        <!-- Love Quote Section -->
+        <div class="mt-16 bg-white bg-opacity-60 backdrop-blur-sm rounded-xl p-8 shadow-lg">
+            <blockquote class="text-2xl italic text-gray-700 mb-4">
+                "El amor es la fuerza más poderosa del universo. Únete y descúbrelo."
+            </blockquote>
+            <cite class="text-gray-500">- DatingApp</cite>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Add floating hearts animation
+        document.addEventListener('DOMContentLoaded', function() {
+            const createHeart = () => {
+                const heart = document.createElement('div');
+                heart.innerHTML = '❤️';
+                heart.className = 'fixed text-2xl pointer-events-none z-10 animate-bounce';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.top = '100vh';
+                heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                document.body.appendChild(heart);
+
+                setTimeout(() => {
+                    heart.remove();
+                }, 5000);
+            };
+
+            setInterval(createHeart, 2000);
+        });
+    </script>
+}

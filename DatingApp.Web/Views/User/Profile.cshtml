@@ -1,0 +1,327 @@
+﻿@* DatingApp.Web/Views/User/Profile.cshtml *@
+@model DatingApp.Web.ViewModels.ProfileViewModel
+
+@{
+    ViewData["Title"] = "Mi Perfil";
+    Layout = "_Layout";
+}
+
+<style>
+    .card-shadow {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+</style>
+
+<div class="min-h-screen bg-gradient-to-br from-pink-50 via-white to-red-50">
+        <!-- Header Section -->
+        <div class="text-center mb-8">
+            <div class="flex justify-center mb-4">
+                <i class="fas fa-heart text-5xl text-pink-500 heart-pulse"></i>
+            </div>
+            <h1 class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-red-600 mb-2">Mi Perfil</h1>
+            <p class="text-gray-600 text-lg">Haz que tu perfil brille y atraiga corazones</p>
+        </div>
+
+        <form asp-controller="User" asp-action="UpdateProfile" method="post" enctype="multipart/form-data">
+            <input type="hidden" asp-for="Id" />
+
+            <div asp-validation-summary="All" class="text-red-500 mb-4"></div>
+
+            <div class="profile-grid">
+                <!-- Profile Photos Card -->
+                <div class="profile-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-camera text-pink-500"></i>
+                            Fotos de Perfil
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="carousel-container h-80 mb-4">
+                            @if (Model.ProfilePhotoUrls != null && Model.ProfilePhotoUrls.Any())
+                            {
+                                for (int i = 0; i < Model.ProfilePhotoUrls.Count; i++)
+                                {
+                                    var photoUrl = Model.ProfilePhotoUrls[i];
+                                    <div class="carousel-item absolute inset-0 w-full h-full transition-opacity duration-500 ease-in-out @(i == 0 ? "opacity-100" : "opacity-0")">
+                                        <img src="@photoUrl" alt="Foto de perfil @(i+1)" class="w-full h-full object-cover" />
+                                        <button type="button" class="delete-photo-btn absolute top-3 right-3 p-2 text-white bg-red-500 rounded-full hover:bg-red-600 transition-colors shadow-lg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm6 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                }
+
+                                @if (Model.ProfilePhotoUrls.Count > 1)
+                                {
+                                    <div class="carousel-nav">
+                                        @for (int i = 0; i < Model.ProfilePhotoUrls.Count; i++)
+                                        {
+                                            <div class="carousel-dot @(i == 0 ? "active" : "")" data-slide="@i"></div>
+                                        }
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                                    <div class="text-center text-gray-500">
+                                        <i class="fas fa-image text-4xl mb-2"></i>
+                                        <p>Sin fotos de perfil</p>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="form-group">
+                            <input type="file" name="ProfilePhotos" multiple class="form-control" />
+                            <label>Subir más fotos</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personal Information Card -->
+                <div class="profile-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-user text-pink-500"></i>
+                            Información Personal
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <input asp-for="Username" class="form-control" placeholder=" " />
+                            <label asp-for="Username" class="floating-label">Nombre de usuario</label>
+                            <span asp-validation-for="Username" class="text-red-500 text-xs mt-1 block field-validation-valid"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <textarea asp-for="Bio" rows="3" class="form-control" placeholder=" "></textarea>
+                            <label asp-for="Bio" class="floating-label">Biografía</label>
+                        </div>
+
+                        <div class="form-group">
+                            <input asp-for="Interests" class="form-control" placeholder=" " />
+                            <label asp-for="Interests" class="floating-label">Intereses</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preferences Card -->
+                <div class="profile-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-sliders-h text-pink-500"></i>
+                            Preferencias y Ubicación
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <input asp-for="DateOfBirth" type="date" class="form-control" placeholder=" " />
+                            <label asp-for="DateOfBirth" class="floating-label">Fecha de Nacimiento</label>
+                            <span asp-validation-for="DateOfBirth" class="text-red-500 text-xs mt-1 block field-validation-valid"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <select asp-for="Gender" class="form-select">
+                                <option value="">Selecciona tu género</option>
+                                <option value="Hombre">Hombre</option>
+                                <option value="Mujer">Mujer</option>
+                                <option value="No Binario">No Binario</option>
+                            </select>
+                            <label asp-for="Gender" class="floating-label">Mi género</label>
+                        </div>
+
+                        <div class="form-group">
+                            <select asp-for="LookingFor" class="form-select">
+                                <option value="">Selecciona una opción</option>
+                                <option value="Hombres">Hombres</option>
+                                <option value="Mujeres">Mujeres</option>
+                                <option value="Ambos">Ambos</option>
+                            </select>
+                            <label asp-for="LookingFor" class="floating-label">Busco</label>
+                        </div>
+
+                        <div class="form-group">
+                            <input asp-for="MinAge" type="number" class="form-control" placeholder=" " min="18" max="99" />
+                            <label asp-for="MinAge" class="floating-label">Edad Mínima</label>
+                        </div>
+
+                        <div class="form-group">
+                            <input asp-for="MaxAge" type="number" class="form-control" placeholder=" " min="18" max="99" />
+                            <label asp-for="MaxAge" class="floating-label">Edad Máxima</label>
+                        </div>
+
+                        <div class="form-group">
+                            <select asp-for="Country" class="form-select">
+                                <option value="">Selecciona tu país</option>
+                                <option value="República Dominicana">República Dominicana</option>
+                                <option value="Estados Unidos">Estados Unidos</option>
+                                <option value="México">México</option>
+                                <option value="España">España</option>
+                                <option value="Colombia">Colombia</option>
+                                <option value="Argentina">Argentina</option>
+                                <option value="Chile">Chile</option>
+                                <option value="Perú">Perú</option>
+                                <option value="Venezuela">Venezuela</option>
+                                <option value="Ecuador">Ecuador</option>
+                                <option value="Uruguay">Uruguay</option>
+                                <option value="Paraguay">Paraguay</option>
+                                <option value="Bolivia">Bolivia</option>
+                                <option value="Panamá">Panamá</option>
+                                <option value="Costa Rica">Costa Rica</option>
+                                <option value="El Salvador">El Salvador</option>
+                                <option value="Guatemala">Guatemala</option>
+                                <option value="Honduras">Honduras</option>
+                                <option value="Nicaragua">Nicaragua</option>
+                                <option value="Cuba">Cuba</option>
+                                <option value="Puerto Rico">Puerto Rico</option>
+                            </select>
+                            <label asp-for="Country" class="floating-label">País</label>
+                            <span asp-validation-for="Country" class="text-red-500 text-xs mt-1 block field-validation-valid"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <input asp-for="City" class="form-control" placeholder=" " />
+                            <label asp-for="City" class="floating-label">Ciudad</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Icebreakers Card -->
+                <div class="profile-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-comments text-pink-500"></i>
+                            Rompehielos
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <input id="PromptAnswers_IdealWeekend" name="PromptAnswers[IdealWeekend]" value="@(Model.PromptAnswers != null && Model.PromptAnswers.ContainsKey("IdealWeekend") ? Model.PromptAnswers["IdealWeekend"] : string.Empty)" class="form-control" placeholder=" " />
+                            <label for="PromptAnswers_IdealWeekend" class="floating-label">Mi fin de semana ideal es...</label>
+                        </div>
+
+                        <div class="form-group">
+                            <input id="PromptAnswers_AlwaysLaughAt" name="PromptAnswers[AlwaysLaughAt]" value="@(Model.PromptAnswers != null && Model.PromptAnswers.ContainsKey("AlwaysLaughAt") ? Model.PromptAnswers["AlwaysLaughAt"] : string.Empty)" class="form-control" placeholder=" " />
+                            <label for="PromptAnswers_AlwaysLaughAt" class="floating-label">Siempre me río cuando...</label>
+                        </div>
+
+                        <div class="form-group">
+                            <input id="PromptAnswers_LifeGoal" name="PromptAnswers[LifeGoal]" value="@(Model.PromptAnswers != null && Model.PromptAnswers.ContainsKey("LifeGoal") ? Model.PromptAnswers["LifeGoal"] : string.Empty)" class="form-control" placeholder=" " />
+                            <label for="PromptAnswers_LifeGoal" class="floating-label">Algo que quiero hacer en mi vida es...</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Save Button -->
+            <div class="text-center mt-8">
+                <button type="submit" class="btn-modern">
+                    <i class="fas fa-heart mr-2"></i>
+                    Guardar Cambios
+                </button>
+            </div>
+        </form>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.querySelector('.carousel-container');
+            if (!container) return;
+
+            const items = container.querySelectorAll('.carousel-item');
+            const dots = container.querySelectorAll('.carousel-dot');
+            let currentIndex = 0;
+
+            function updateCarousel() {
+                items.forEach((item, index) => {
+                    if (index === currentIndex) {
+                        item.classList.remove('opacity-0');
+                        item.classList.add('opacity-100');
+                        item.style.pointerEvents = 'auto';
+                    } else {
+                        item.classList.remove('opacity-100');
+                        item.classList.add('opacity-0');
+                        item.style.pointerEvents = 'none';
+                    }
+                });
+
+                dots.forEach((dot, index) => {
+                    if (index === currentIndex) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+            }
+
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', () => {
+                    currentIndex = index;
+                    updateCarousel();
+                });
+            });
+
+            // Auto-play carousel
+            setInterval(() => {
+                if (items.length > 1) {
+                    currentIndex = (currentIndex + 1) % items.length;
+                    updateCarousel();
+                }
+            }, 5000);
+
+            // Delete photo logic
+            const deleteButtons = document.querySelectorAll('.delete-photo-btn');
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', async (e) => {
+                    const photoUrl = e.currentTarget.closest('.carousel-item').querySelector('img').src;
+
+                    if (confirm('¿Estás seguro de que quieres eliminar esta foto?')) {
+                        try {
+                            const response = await fetch('/User/DeletePhoto', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-Requested-With': 'XMLHttpRequest'
+                                },
+                                body: JSON.stringify({ PhotoUrl: photoUrl })
+                            });
+
+                            if (response.ok) {
+                                window.location.reload();
+                            } else {
+                                alert('Error al eliminar la foto. ' + response.statusText);
+                            }
+                        } catch (error) {
+                            console.error('Error:', error);
+                            alert('Hubo un problema al conectar con el servidor.');
+                        }
+                    }
+                });
+            });
+
+            // Floating labels for form controls
+            const formControls = document.querySelectorAll('.form-control, .form-select');
+            formControls.forEach(control => {
+                const updateSelectedClass = () => {
+                    if (control.value !== '') {
+                        control.classList.add('selected');
+                    } else {
+                        control.classList.remove('selected');
+                    }
+                };
+
+                // Initial check
+                updateSelectedClass();
+
+                // On input/change
+                control.addEventListener('input', updateSelectedClass);
+                control.addEventListener('change', updateSelectedClass);
+            });
+        });
+    </script>
+}

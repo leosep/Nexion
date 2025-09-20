@@ -1,0 +1,264 @@
+/* Romantic Dating App Styles */
+
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #ff6b9d;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+  color: var(--bs-secondary-color);
+  text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+  text-align: start;
+}
+
+/* Love-themed animations */
+@keyframes floatHearts {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(5deg); }
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+.love-float {
+  animation: floatHearts 3s ease-in-out infinite;
+}
+
+.love-sparkle {
+  animation: sparkle 2s ease-in-out infinite;
+}
+
+/* Gradient text */
+.love-text {
+  background: linear-gradient(135deg, #ff6b9d 0%, #c44569 50%, #ff4757 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Romantic shadows */
+.love-shadow {
+  box-shadow: 0 10px 30px rgba(255, 107, 157, 0.3);
+}
+
+/* Heartbeat effect */
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.heartbeat {
+  animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+/* Modern Profile Styles */
+.profile-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 107, 157, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(255, 107, 157, 0.1);
+  transition: all 0.3s ease;
+}
+
+.profile-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(255, 107, 157, 0.15);
+}
+
+/* Floating Label Styles */
+.form-group {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.floating-label {
+  position: absolute;
+  left: 16px;
+  top: 16px;
+  color: #9ca3af;
+  transition: all 0.2s ease;
+  pointer-events: none;
+  background: transparent;
+  padding: 0 4px;
+}
+
+.form-control:focus + .floating-label,
+.form-control:not(:placeholder-shown) + .floating-label,
+.form-control.selected + .floating-label,
+.form-select:focus + .floating-label,
+.form-select.selected + .floating-label {
+  top: -8px;
+  left: 12px;
+  font-size: 0.75rem;
+  color: #ec4899;
+  background: white;
+  padding: 0 8px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #ec4899;
+  box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
+  background: white;
+}
+
+.form-control::placeholder {
+  color: transparent;
+}
+
+/* Modern Select Styles */
+.form-select {
+  width: 100%;
+  padding: 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+}
+
+.form-select:focus {
+  outline: none;
+  border-color: #ec4899;
+  box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
+  background: white;
+}
+
+/* Card Header Styles */
+.card-header {
+  background: linear-gradient(135deg, #fce7f3 0%, #fdf2f8 100%);
+  border-bottom: 1px solid rgba(255, 107, 157, 0.1);
+  padding: 1.5rem;
+  border-radius: 16px 16px 0 0;
+}
+
+.card-title {
+  color: #be185d;
+  font-weight: 600;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+/* Photo Carousel Improvements */
+.carousel-container {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.carousel-item {
+  transition: opacity 0.5s ease;
+}
+
+.carousel-nav {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.5rem;
+}
+
+.carousel-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.carousel-dot.active {
+  background: #ec4899;
+  transform: scale(1.2);
+}
+
+/* Modern Button Styles */
+.btn-modern {
+  background: linear-gradient(135deg, #ec4899 0%, #f97316 100%);
+  border: none;
+  border-radius: 12px;
+  padding: 12px 24px;
+  color: white;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(236, 72, 153, 0.3);
+}
+
+.btn-modern:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(236, 72, 153, 0.4);
+}
+
+/* Responsive Grid */
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .profile-card {
+    margin: 0 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .profile-card {
+    margin: 0;
+  }
+}

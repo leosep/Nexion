@@ -29,7 +29,19 @@
                 {
                     <a href="@Url.Action("Chat", "Chat", new { otherUserId = matchedUser.Id })" class="flex items-center space-x-4 p-4 rounded-xl hover:bg-pink-100 transition-all duration-300 cursor-pointer transform hover:scale-105 shadow-lg border border-pink-100">
                         <div class="relative">
-                            <img src="@(matchedUser.ProfilePhotoUrls.FirstOrDefault() ?? "https://placehold.co/40x40/e2e8f0/718096?text=No+Foto")" alt="@matchedUser.Username" class="w-12 h-12 rounded-full object-cover border-2 border-pink-200">
+                            @if (matchedUser.ProfilePhotoUrls != null && matchedUser.ProfilePhotoUrls.Any())
+                            {
+                                <img src="@matchedUser.ProfilePhotoUrls.First()" alt="@matchedUser.Username" class="w-12 h-12 rounded-full object-cover border-2 border-pink-200" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 border-2 border-pink-200 flex items-center justify-center" style="display: none;">
+                                    <i class="fas fa-user text-gray-500 text-sm"></i>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 border-2 border-pink-200 flex items-center justify-center">
+                                    <i class="fas fa-user text-gray-500 text-sm"></i>
+                                </div>
+                            }
                             <div class="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white"></div>
                         </div>
                         <div class="flex-1">

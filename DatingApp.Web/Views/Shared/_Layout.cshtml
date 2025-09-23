@@ -31,7 +31,8 @@
                     <i class="fas fa-heart heart-pulse text-red-300"></i>
                     <span>DatingApp</span>
                 </a>
-                <div class="flex items-center space-x-4">
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-4">
                     @if (User.Identity.IsAuthenticated)
                     {
                         <a href="/User/Index" class="text-white hover:text-pink-200 transition duration-300 flex items-center space-x-1">
@@ -67,6 +68,49 @@
                         </a>
                     }
                 </div>
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="md:hidden hidden mt-4 pb-4">
+                <div class="flex flex-col space-y-2">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <a href="/User/Index" class="text-white hover:text-pink-200 transition duration-300 flex items-center space-x-2 py-2">
+                            <i class="fas fa-search"></i>
+                            <span>Explorar</span>
+                        </a>
+                        <a href="/User/Descubrir" class="text-white hover:text-pink-200 transition duration-300 flex items-center space-x-2 py-2">
+                            <i class="fas fa-heart"></i>
+                            <span>Descubrir</span>
+                        </a>
+                        <a href="/User/Profile" class="text-white hover:text-pink-200 transition duration-300 flex items-center space-x-2 py-2">
+                            <i class="fas fa-user"></i>
+                            <span>Perfil</span>
+                        </a>
+                        <a href="/Chat" class="text-white hover:text-pink-200 transition duration-300 flex items-center space-x-2 py-2">
+                            <i class="fas fa-comments"></i>
+                            <span>Mensajes</span>
+                        </a>
+                        <a href="/Auth/Logout" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-full transition duration-300 flex items-center space-x-2 w-fit">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Cerrar sesión</span>
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="/Auth/Login" class="text-white hover:text-pink-200 transition duration-300 flex items-center space-x-2 py-2">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>Login</span>
+                        </a>
+                        <a href="/Auth/Register" class="text-white hover:text-pink-200 transition duration-300 flex items-center space-x-2 py-2">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Registro</span>
+                        </a>
+                    }
+                </div>
             </div>
         </div>
     </nav>
@@ -84,5 +128,17 @@
     </footer>
 
     @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', function() {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+        });
+    </script>
 </body>
 </html>

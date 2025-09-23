@@ -250,6 +250,14 @@ body {
   .profile-card {
     margin: 0 0.5rem;
   }
+
+  .carousel-container {
+    height: 16rem; /* 256px instead of 320px */
+  }
+
+  .user-card .user-carousel-container {
+    height: 18rem; /* 288px instead of 384px */
+  }
 }
 
 @media (max-width: 480px) {
@@ -260,5 +268,41 @@ body {
 
   .profile-card {
     margin: 0;
+  }
+
+  .carousel-container {
+    height: 12rem; /* 192px */
+  }
+
+  .user-card .user-carousel-container {
+    height: 14rem; /* 224px */
+  }
+
+  .text-4xl {
+    font-size: 1.875rem; /* Smaller headings */
+  }
+
+  .text-3xl {
+    font-size: 1.5rem;
+  }
+
+  /* Reduce padding on very small screens */
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .card-body {
+    padding: 1rem;
+  }
+
+  .form-control {
+    padding: 12px;
+    font-size: 0.9rem;
+  }
+
+  .btn-modern {
+    padding: 10px 20px;
+    font-size: 0.9rem;
   }
 }
